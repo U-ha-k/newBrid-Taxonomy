@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equix="X-UA-Compatible" content="ie=edge">
+  <!-- <link rel="stylesheet" href="./style.css"> -->
+  <title>Infographic</title>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/addons/p5.sound.min.js"></script> -->
+</head>
+
+<body>
+
+  <div class="btns">
+    <button id="tax_btn">
+      TAXON_ORDER
+    </button>
+    <button id="cate_btn">
+      CATEGORY
+    </button>
+    <button id="order_btn">
+      ORDER1
+    </button>
+    <button id="spe_btn">
+      SCI_GROUP
+    </button>
+    <button id="fam_btn">
+      FAMILY
+    </button>
+    <button id="sci_name_btn">
+      SCI_NAME
+    </button>
+    <button id="species_Code_btn">
+      SPECIES_CODE
+    </button>
+    <button id="fam_btn">
+      PRIMARY_COM_NAME
+    </button>
+  </div>
+
+
+
+
+
+
+  <div class="cont">
+    <h2 class="text_of_tax" style="display:none"></h2>
+    <ul class="create_list" style = "display:none">
+    </ul>
+    <canvas id="myChart"></canvas>
+
+   
+
+
+  </div>
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const ctx = document.getElementById('myChart');
+
+    const btns = document.querySelectorAll('.btns button')
+
+    const txtOfTax = document.querySelector('.text_of_tax')
+    const createList = document.querySelector('.create_list')
+
+
+    var arr = [];
+
+
+    var TAX = [];
+    var CATE = [];
+    var ORD = [];
+    var GROUP = [];
+    var FAM = [];
+    var SCI = [];
+    var CODE = [];
+    var PRI = [];
+
+    var chart;
+
+
+
+    fetch("./ebird_taxonomy_v2022.json")
+      .then(response => {
+        return response.json();
+      })
+      .then(jsondata => {
+        arr = jsondata;
+
+        for (let i = 0; i < arr.length; i++) {
+          TAX.push(arr[i].TAXON_ORDER)
+          CATE.push(arr[i].CATEGORY)
+          ORD.push(arr[i].ORDER1)
+          GROUP.push(arr[i].SPECIES_GROUP)
+          FAM.push(arr[i].FAMILY)
+          SCI.push(arr[i].SCI_NAME)
+          CODE.push(arr[i].SPECIES_CODE)
+          PRI.push(arr[i].PRIMARY_COM_NAME)
+        }
+
+
+
+        // define tax contents
+        txtOfTax.innerHTML = TAX[0] +" ~ "+ TAX[TAX.length - 1]
+
+
+        let arrs = [TAX, CATE, ORD, GROUP, FAM, SCI, CODE, PRI]
+
+
+        for (let k = 0; k < btns.length; k++) {
+
+
+          btns[k].addEventListener("click", () => {
+            let set1 = new Set(arrs[k])
+            const nSet = [...set1]
+
+            if (k >= 1 && k <= 4) {
+              txtOfTax.style.display = "none"
+              createList.style.display = "none"
+
+              let result = arrs[k].reduce((accu, curr) => {
+                accu[curr] = (accu[curr] || 0) + 1;
+                return accu;
+              }, {});
+
+              if (chart == undefined) {
+                drawChart(nSet, result)
+              } else {
+                chart.destroy();
+                drawChart(nSet, result)
+              }
+
+            } else if (k == 0) {
+              if (chart !== undefined) {
+            chart.destroy()
+          }
+              txtOfTax.style.display = "block"
+              createList.style.display = "none"
+            } else {
+              txtOfTax.style.display = "none"
+              
+              showList(arrs[k]);
+            }
+          })
+
+
+
+        }
+
+        function showList(a) {
+          // Delete Chart
+          if (chart !== undefined) {
+            chart.destroy()
+          }
+          createList.style.display = "block"
+          var inHTML= []
+          for(let l = 0; l < a.length; l++){
+            inHTML.push("<li>"+a[l]+"</li>")
+          }
+          createList.innerHTML = inHTML.join(" ");
+
+        }
+
+        function drawChart(a, b) {
+          chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: a,
+              datasets: [{
+                label: 'of Votes',
+                data: Object.values(b),
+                borderWidth: 1
+              }, ]
+            },
+            options: {
+              cutout: '40%',
+              plugins: {
+                legend: {
+                  display: false
+                }
+              }
+            }
+          });
+
+        }
+
+
+
+      });
+
+
+    //   const categories =[];
+    //   const order1 = [];
+    //
+    //   chartIt();
+    //
+    //   async function chartIt(){
+    //     await getData();
+    //   const ctx = document.getElementById('myChart');
+    //
+    //   new Chart(ctx, {
+    //     type: 'bar',
+    //     data: {
+    //       labels: categories,
+    //       datasets: [{
+    //         label: 'Bird Taxonomy',
+    //         data: order1,
+    //         backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+    //         borderWidth: 1
+    //       }]
+    //     },
+    //     options: {
+    //       scales: {
+    //         y: {
+    //           beginAtZero: true
+    //         }
+    //       }
+    //     }
+    //   });
+    // }
+
+    // .then(response => {
+    //   console.log('looks good');
+    // })
+    // .catch(error => {
+    //   console.log('error');
+    //   console.error(error);
+    // });
+
+    // async function getData(){
+    //  const response = await fetch('*data/ebird_taxonomy_v2022.csv');
+    //  const data = await response.text();
+    //  // console.log(data);
+    //
+    //  const table = data.split('\n').slice(1);
+    //  table.forEach(row => {
+    //    const columns = row.split(',');
+    //    const CATEGORY = columns[1];
+    //    categories.push(CATEGORY);
+    //    const ORDER1 = columns[2];
+    //    order1.push(ORDER1);
+
+    // const SPECIES_GROUP = row[3];
+    // const FAMILY = row[4];
+    // const REPORT_AS = row[5];
+    // const SCI_NAME = row[6];
+    // const SPECIES_CODE = row[7];
+    // const PRIMARY_COM_NAME = row[8];
+
+    //    console.log(CATEGORY, ORDER1);
+    //  });
+    // }
+  </script>
+</body>
+
+</html>

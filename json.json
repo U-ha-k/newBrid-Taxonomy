@@ -1,0 +1,32 @@
+[
+    {
+     "TAXON_ORDER": 2,
+     "CATEGORY": "species",
+     "SPECIES_CODE": "ostric2",
+     "PRIMARY_COM_NAME": "Common Ostrich",
+     "SCI_NAME": "Struthio camelus",
+     "ORDER1": "Struthioniformes",
+     "FAMILY": "Struthionidae (Ostriches)",
+     "SPECIES_GROUP": "Ostriches"
+    },
+    {
+     "TAXON_ORDER": 7,
+     "CATEGORY": "species",
+     "SPECIES_CODE": "ostric3",
+     "PRIMARY_COM_NAME": "Somali Ostrich",
+     "SCI_NAME": "Struthio molybdophanes",
+     "ORDER1": "Struthioniformes",
+     "FAMILY": "Struthionidae (Ostriches)",
+     "SPECIES_GROUP": "Ostriches"
+    },
+    {
+     "TAXON_ORDER": 8,
+     "CATEGORY": "slash",
+     "SPECIES_CODE": "y00934",
+     "PRIMARY_COM_NAME": "Common\/Somali Ostrich",
+     "SCI_NAME": "Struthio camelus\/molybdophanes",
+     "ORDER1": "Struthioniformes",
+     "FAMILY": "Struthionidae (Ostriches)",
+     "SPECIES_GROUP": "Ostriches"
+    }
+   ]
